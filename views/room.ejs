@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script>
+    const ROOM_ID = "<%= roomId %>"
+  </script>
+  <script defer src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="script.js" defer></script>
+  <title>Document</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url('wallpaper.jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center center;
+    }
+
+    #vgrid {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      overflow-x: auto;
+    }
+
+    video {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      transform: scaleX(-1);
+      border-style: solid;
+      border-color: white;
+      border-width: 5px;
+      margin: 0 10px; /* Adjusted margin for space on the left and right */
+    }
+  </style>
+</head>
+<body>
+  <div id="vgrid"></div></body>
+  <script src="script.js" defer></script>
+</body>
+</html>
