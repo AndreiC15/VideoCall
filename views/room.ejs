@@ -1,16 +1,19 @@
+<!-- room.ejs -->
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script>
-    const ROOM_ID = "<%= roomId %>"
+    const ROOM_ID = "<%= roomId %>";
   </script>
   <script defer src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
   <script src="/socket.io/socket.io.js" defer></script>
   <script src="script.js" defer></script>
-  <title>Document</title>
+  <title>VideoCall</title>
   <style>
     body {
       display: flex;
@@ -42,10 +45,24 @@
       border-width: 5px;
       margin: 0 10px; /* Adjusted margin for space on the left and right */
     }
+
+    .video-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .user-counter {
+      margin: 5px 0;
+      font-size: 16px;
+      color: white;
+    }
   </style>
 </head>
+
 <body>
-  <div id="vgrid"></div></body>
-  <script src="script.js" defer></script>
+  <div id="vgrid"></div>
 </body>
+
 </html>

@@ -27,6 +27,8 @@ app.use(express.static('public'))
 
 app.use('/peerjs', peerServer)
 
+
+
 app.get('/', (req, res) => {
   res.redirect(`/${uuidV4()}`)
 })
@@ -40,12 +42,28 @@ io.on('connection', socket => {
   var clientIp = socket.request.connection.remoteAddress;
 
   console.log(clientIp, socketId);
+
   socket.on('join-room', (roomId, userId) => {
-    socket.join(roomId)
+    socket.join(roomId);
+
+    // Check if there are any clients in the room
+    const clientsInRoom = io.sockets.adapter.rooms[roomId];
+    const numClients = clientsInRoom ? Object.keys(clientsInRoom.sockets).length : 0;
+
+    const isAdmin = numClients === 1;
+    const isMember = numClients > 1;
+    
+    socket.emit('member-status', isMember); // The first user who joins becomes the admin
+    socket.emit('admin-status', isAdmin); // Emit the admin status back to the client
+    
     socket.to(roomId).broadcast.emit('user-connected', userId)
 
     socket.on('disconnect', () => {
       socket.to(roomId).broadcast.emit('user-disconnected', userId)
+    })
+
+    socket.on('accept-user', (userId, room) => {
+      io.in(roomId).emit('user-accepted', userId);
     })
   })
 })
