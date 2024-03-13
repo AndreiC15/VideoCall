@@ -7,6 +7,7 @@ const peers = {};
 
 let isAdmin = false;
 let modalShown = false;
+let confirmationResult = false;
 
 socket.on("admin-status", (isAdminFromServer) => {
   isAdmin = isAdminFromServer;
@@ -31,14 +32,14 @@ function callProcess(peer, call, stream) {
   });
 }
 
-function handleUserConnected(userId, stream) {
+async function handleUserConnected(userId, stream) {
   if (isAdmin && !modalShown) {
-    if (window.confirm("Do you want to allow the user to connect?")) {
-      // Set to true once alert is shown
+    const confirmationResult = await confirmUserConnect();
+    
+    if (confirmationResult) {
       connectToNewUser(userId, stream);
       socket.emit("accept-user", userId, ROOM_ID);
     } else {
-      // Reject the call
       socket.emit("reject-call", userId);
     }
   }
@@ -73,7 +74,6 @@ function connectToNewUser(userId, stream) {
   }
 }
 
-
 function addVideoStream(video, stream) {
   video.srcObject = stream;
   
@@ -82,7 +82,6 @@ function addVideoStream(video, stream) {
   });
   videoGrid.append(video);
 }
-
 
 socket.on("user-accepted", (userId) => {
   // Automatically accept the user on all devices
@@ -113,3 +112,10 @@ navigator.mediaDevices
       socket.emit("join-room", ROOM_ID, id);
     });
   });
+
+function confirmUserConnect() {
+  return new Promise((resolve) => {
+    const result = window.confirm("Do you want to allow the user to connect?");
+    resolve(result);
+  });
+}
