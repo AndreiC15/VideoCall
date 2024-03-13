@@ -7,7 +7,6 @@ const peers = {};
 
 let isAdmin = false;
 let modalShown = false;
-// let isAccept = false;
 
 socket.on("admin-status", (isAdminFromServer) => {
   isAdmin = isAdminFromServer;
@@ -36,16 +35,11 @@ function handleUserConnected(userId, stream) {
   if (isAdmin && !modalShown) {
     if (window.confirm("Do you want to allow the user to connect?")) {
       // Set to true once alert is shown
-      isAccept = true;
       connectToNewUser(userId, stream);
       socket.emit("accept-user", userId, ROOM_ID);
-    } else if (isAccept && approvedUsers[userId]) {
-      // Other users connect to the new user without alert
-      connectToNewUser(userId, stream);
     } else {
       // Reject the call
       socket.emit("reject-call", userId);
-      approvedUsers[userId] = false;
     }
   }
 }
