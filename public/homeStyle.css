@@ -1,0 +1,38 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url("wallpaper.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center center;
+  }
+
+  #vgrid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  video {
+    width: calc(90% - 20px);
+    max-width: 300px;
+    height: auto;
+    object-fit: cover;
+    border-style: double;
+    border-color: white;
+    border-width: 10px;
+    margin: 10px;
+    transform: scaleX(-1);
+  }
+
+  @media screen and (max-width: 600px) {
+    video {
+      width: calc(100% - 20px);
+    }
+  }
