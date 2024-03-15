@@ -21,13 +21,13 @@ socket.on("admin-status", (isAdminFromServer) => {
 
 function callProcess(peer, call, stream) {
   call.answer(stream);
-  const video = document.createElement('video');
+  const video = document.createElement("video");
 
-  call.on('stream', userVideoStream => {
+  call.on("stream", (userVideoStream) => {
     addVideoStream(video, userVideoStream);
   });
 
-  call.on('close', () => {
+  call.on("close", () => {
     video.remove();
   });
 }
@@ -35,7 +35,7 @@ function callProcess(peer, call, stream) {
 async function handleUserConnected(userId, stream) {
   if (isAdmin && !modalShown) {
     const confirmationResult = await confirmUserConnect();
-    
+
     if (confirmationResult) {
       connectToNewUser(userId, stream);
       socket.emit("accept-user", userId, ROOM_ID);
@@ -55,17 +55,17 @@ function handleUserDisconnected(userId, stream) {
 function connectToNewUser(userId, stream) {
   // Check if the user is not the admin (current user)
   if (userId !== myPeer.id) {
-    const video = document.createElement('video');
+    const video = document.createElement("video");
 
     const call = myPeer.call(userId, stream);
 
     // Check if call is truthy before setting up event listeners
     if (call) {
-      call.on('stream', userVideoStream => {
+      call.on("stream", (userVideoStream) => {
         addVideoStream(video, userVideoStream);
       });
 
-      call.on('close', () => {
+      call.on("close", () => {
         video.remove();
       });
 
@@ -76,8 +76,8 @@ function connectToNewUser(userId, stream) {
 
 function addVideoStream(video, stream) {
   video.srcObject = stream;
-  
-  video.addEventListener('loadedmetadata', () => {
+
+  video.addEventListener("loadedmetadata", () => {
     video.play();
   });
   videoGrid.append(video);
