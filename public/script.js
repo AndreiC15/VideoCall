@@ -13,9 +13,11 @@ socket.on("admin-status", (isAdminFromServer) => {
   isAdmin = isAdminFromServer;
 
   if (isAdmin) {
-    console.log("You are the admin.");
+    console.log("You are the call host.");
+    alert("You are the call host.");
   } else {
-    console.log("You are a member.");
+    console.log("You are a guest.");
+    alert("Welcome! Please wait for the admin to approve your join request");
   }
 });
 
@@ -52,8 +54,12 @@ function handleUserDisconnected(userId, stream) {
   if (peers[userId]) {
     peers[userId].close();
     delete peers[userId];
+    console.log("User " + userId + " has left the call.");
+    alert("User " + userId + " has left the call.");
+    
   }
 }
+
 
 function connectToNewUser(userId, stream) {
   // Check if the user is not the admin (current user)
@@ -79,8 +85,6 @@ function connectToNewUser(userId, stream) {
 
 function rejectNewUser(userId) {
   if (userId === myPeer.id) {
-    console.log("You are rejected by the admin.");
-    alert("You are rejected by the admin.");
     // Stop the stream and remove the video
     myVideo.srcObject.getTracks().forEach((track) => track.stop());
     myVideo.remove();
@@ -102,10 +106,16 @@ function addVideoStream(video, stream) {
 socket.on("user-accepted", (userId) => {
   // Automatically accept the user on all devices
   connectToNewUser(userId, myVideo.srcObject);
+  if (userId === myPeer.id) {
+    alert("You have been accepted by the admin.");
+  }
 });
 
 socket.on('user-rejected', userId => {
   rejectNewUser(userId);
+  if (userId === myPeer.id) {
+    alert("You have been rejected by the admin.");
+  }
 })
 
 navigator.mediaDevices
