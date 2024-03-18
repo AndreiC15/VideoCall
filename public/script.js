@@ -21,13 +21,13 @@ socket.on("admin-status", (isAdminFromServer) => {
 
 function callProcess(peer, call, stream) {
   call.answer(stream);
-  const video = document.createElement("video");
+  const video = document.createElement('video');
 
-  call.on("stream", (userVideoStream) => {
+  call.on('stream', userVideoStream => {
     addVideoStream(video, userVideoStream);
   });
 
-  call.on("close", () => {
+  call.on('close', () => {
     video.remove();
   });
 }
@@ -35,12 +35,15 @@ function callProcess(peer, call, stream) {
 async function handleUserConnected(userId, stream) {
   if (isAdmin && !modalShown) {
     const confirmationResult = await confirmUserConnect();
-
+    
     if (confirmationResult) {
       connectToNewUser(userId, stream);
+      console.log('Accepted '+userId);
       socket.emit("accept-user", userId, ROOM_ID);
     } else {
-      socket.emit("reject-call", userId);
+      rejectNewUser(userId, stream);
+      console.log('Rejected ' +userId);
+      socket.emit('reject-user', userId, ROOM_ID);
     }
   }
 }
@@ -55,17 +58,17 @@ function handleUserDisconnected(userId, stream) {
 function connectToNewUser(userId, stream) {
   // Check if the user is not the admin (current user)
   if (userId !== myPeer.id) {
-    const video = document.createElement("video");
+    const video = document.createElement('video');
 
     const call = myPeer.call(userId, stream);
 
     // Check if call is truthy before setting up event listeners
     if (call) {
-      call.on("stream", (userVideoStream) => {
+      call.on('stream', userVideoStream => {
         addVideoStream(video, userVideoStream);
       });
 
-      call.on("close", () => {
+      call.on('close', () => {
         video.remove();
       });
 
@@ -74,10 +77,23 @@ function connectToNewUser(userId, stream) {
   }
 }
 
+function rejectNewUser(userId) {
+  if (userId === myPeer.id) {
+    console.log("You are rejected by the admin.");
+    alert("You are rejected by the admin.");
+    // Stop the stream and remove the video
+    myVideo.srcObject.getTracks().forEach((track) => track.stop());
+    myVideo.remove();
+    socket.disconnect();
+  }
+
+}
+
+
 function addVideoStream(video, stream) {
   video.srcObject = stream;
-
-  video.addEventListener("loadedmetadata", () => {
+  
+  video.addEventListener('loadedmetadata', () => {
     video.play();
   });
   videoGrid.append(video);
@@ -87,6 +103,10 @@ socket.on("user-accepted", (userId) => {
   // Automatically accept the user on all devices
   connectToNewUser(userId, myVideo.srcObject);
 });
+
+socket.on('user-rejected', userId => {
+  rejectNewUser(userId);
+})
 
 navigator.mediaDevices
   .getUserMedia({

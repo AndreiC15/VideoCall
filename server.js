@@ -64,6 +64,9 @@ io.on("connection", (socket) => {
     socket.on("accept-user", (userId, room) => {
       io.in(roomId).emit("user-accepted", userId);
     });
+    socket.on("reject-user", (userId, room) => {
+      io.in(roomId).emit("user-rejected", userId);
+    });
   });
 });
 
