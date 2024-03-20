@@ -76,7 +76,7 @@ function handleUserDisconnected(userId, stream) {
   if (peers[userId]) {
     peers[userId].close();
     delete peers[userId];
-    socket.emit("disconnect-user", ROOM_ID);
+    socket.emit("disconnect-user", userId, ROOM_ID);
   }
 }
 
