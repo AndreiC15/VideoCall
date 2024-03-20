@@ -34,19 +34,27 @@ function callProcess(peer, call, stream) {
   });
 }
 
+let modal = document.getElementById("joinRequestModal");
+let acceptButton = document.getElementById("acceptButton");
+let rejectButton = document.getElementById("rejectButton");
+
 async function handleUserConnected(userId, stream) {
   if (isAdmin && !modalShown) {
-    const confirmationResult = await confirmUserConnect();
-    
-    if (confirmationResult) {
+    showModal();
+
+    acceptButton.onclick = async () => {
+      hideModal();
       connectToNewUser(userId, stream);
-      console.log('Accepted '+userId);
+      console.log("Accepted " + userId);
       socket.emit("accept-user", userId, ROOM_ID);
-    } else {
-      rejectNewUser(userId, stream);
-      console.log('Rejected ' +userId);
-      socket.emit('reject-user', userId, ROOM_ID);
-    }
+    };
+
+    rejectButton.onclick = async () => {
+      hideModal();
+      rejectNewUser(userId);
+      console.log("Rejected " + userId);
+      socket.emit("reject-user", userId, ROOM_ID);
+    };
   }
 }
 
@@ -92,6 +100,17 @@ function rejectNewUser(userId) {
   }
 
 }
+
+
+
+function showModal() {
+  modal.style.display = "block"; // Show the modal
+}
+
+function hideModal() {
+  modal.style.display = "none"; // Hide the modal
+}
+
 
 
 function addVideoStream(video, stream) {
