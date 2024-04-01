@@ -26,10 +26,14 @@ function callProcess(peer, call, stream) {
   call.answer(stream);
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userVideoStream);
+    if (!peers[call.peer]) {
+      addVideoStream(video, userVideoStream);
+      peers[call.peer] = call;
+    }
   });
   call.on("close", () => {
     video.remove();
+    delete peers[call.peer];
   });
 }
 
