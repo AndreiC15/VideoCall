@@ -71,6 +71,27 @@ video {
   border: 1px solid #888;
 }
 
+/* CSS for video container */
+.video-container {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+/* CSS for socket ID text */
+.socket-id {
+  position: absolute;
+  bottom: -20px; /* Adjust this value as needed to position the text below the video */
+  left: 8%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px;
+  margin: 0;
+  font-size: 12px;
+}
+
+
+
 .modal-buttons {
   text-align: center;
 }

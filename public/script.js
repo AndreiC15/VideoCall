@@ -14,11 +14,15 @@ let myStream = null; // Track the current user's stream
 socket.on("admin-status", (isAdminFromServer) => {
   isAdmin = isAdminFromServer;
   if (isAdmin) {
+    console.log("Your Socket ID:" +myPeer.id);
     console.log("You are the call host.");
     showModal("You are the call host.");
   } else {
+    console.log("Your Socket ID:" +myPeer.id);
     console.log("You are a guest.");
-    showModal("Welcome! Please wait for the admin to approve your join request");
+    showModal(
+      "Welcome! Please wait for the admin to approve your join request"
+    );
   }
 });
 
@@ -27,7 +31,7 @@ function callProcess(peer, call, stream) {
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
     if (!peers[call.peer]) {
-      addVideoStream(video, userVideoStream);
+      addVideoStream(video, userVideoStream, call.peer);
       peers[call.peer] = call;
     }
   });
@@ -37,8 +41,8 @@ function callProcess(peer, call, stream) {
   });
 }
 
-async function handleUserConnected(userId, stream) {
-  if (isAdmin) {
+function handleUserConnected(userId, stream) {
+  if (isAdmin && userId!== myPeer.id) {
     showModal(`Do you want to allow ${userId} to join the call?`, userId);
   }
 }
@@ -58,7 +62,7 @@ function connectToNewUser(userId, stream) {
       const call = myPeer.call(userId, stream);
       if (call) {
         call.on("stream", (userVideoStream) => {
-          addVideoStream(video, userVideoStream);
+          addVideoStream(video, userVideoStream, call.peer);
         });
         call.on("close", () => {
           video.remove();
@@ -145,23 +149,54 @@ function showModal(message, userId) {
   };
 }
 
-
 function hideModal(modal) {
-  modal.style.display = "none";
+  if (modal && modal.style) {
+    modal.style.display = "none";
+  }
 }
 
-function addVideoStream(video, stream) {
+function addVideoStream(video, stream, userId) {
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
     video.play();
   });
+
+  // Append video element to videoGrid
   videoGrid.append(video);
+
+  // Create container for video and socket ID
+  const container = document.createElement("div");
+  container.classList.add("video-container");
+  
+  // Append video and container to videoGrid
+  container.appendChild(video);
+  videoGrid.appendChild(container);
+
+  // Create text element for socket ID
+  const textElement = document.createElement("p");
+  textElement.textContent = "Socket ID: " + userId;
+  textElement.classList.add("socket-id");
+
+  // Append text element under the container
+  container.appendChild(textElement);
 }
 
 function processJoinRequestQueue() {
   if (joinRequestModals.length > 0) {
-    const modal = joinRequestModals.shift(); // Remove the first modal from the array
-    hideModal(modal); // Hide the modal
+    let nextModal;
+    if (joinRequestModals[0].style.display === "none") {
+      for (let i = 1; i < joinRequestModals.length; i++) {
+        if (joinRequestModals[i].style.display!== "none") {
+          nextModal = joinRequestModals[i];
+          break;
+        }
+      }
+    } else {
+      nextModal = joinRequestModals[0];
+    }
+    if (nextModal) {
+      hideModal(nextModal);
+    }
   }
 }
 
@@ -194,16 +229,23 @@ function establishPeerConnection(userId) {
     const call = myPeer.call(userId, myStream);
     if (call) {
       call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
+        if (!peers[userId] ||!peers[userId].call) {
+          addVideoStream(video, userVideoStream, call.peer);
+        }
       });
       call.on("close", () => {
+        if (peers[userId] && peers[userId].call) {
+          peers[userId].call.close();
+          delete peers[userId];
+        }
         video.remove();
       });
       peers[userId] = call;
     }
   }
 }
-
+myPeer.on("open", (id) => {
+  socket.emit("join-room", ROOM_ID, id);
 navigator.mediaDevices
   .getUserMedia({
     video: true,
@@ -211,9 +253,9 @@ navigator.mediaDevices
   })
   .then((stream) => {
     myStream = stream; // Save the stream of the current user
-    addVideoStream(myVideo, stream);
+    addVideoStream(myVideo, stream, id);
     myPeer.on("call", (call) => {
-      callProcess(myPeer, call, stream);
+      callProcess(myPeer, call, stream, id);
     });
     socket.on("user-connected", (userId, stream) => {
       handleUserConnected(userId, stream);
@@ -225,7 +267,6 @@ navigator.mediaDevices
       console.log("User " + userId + " has left the call.");
       showModal("User " + userId + " has left the call.");
     });
-    myPeer.on("open", (id) => {
-      socket.emit("join-room", ROOM_ID, id);
+    
     });
   });
