@@ -39,9 +39,7 @@ function callProcess(peer, call, stream) {
 
 async function handleUserConnected(userId, stream) {
   if (isAdmin) {
-    showModal(`Join request from user ${userId}.`, userId);
-  } else {
-    showModal("Your join request is pending approval. Please wait.");
+    showModal(`Do you want to allow ${userId} to join the call?`, userId);
   }
 }
 
