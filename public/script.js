@@ -125,10 +125,17 @@ function showModal(message, userId) {
   }
 
   modal.appendChild(modalContent);
-  document.body.appendChild(modal);
 
   // Add the modal to the array
   joinRequestModals.push(modal);
+
+  // If there are already join request modals, insert the new modal after the first one
+  if (joinRequestModals.length > 1) {
+    document.body.insertBefore(modal, joinRequestModals[0].nextSibling);
+  } else {
+    // Otherwise, append it to the body
+    document.body.appendChild(modal);
+  }
 
   // Show the modal
   modal.style.display = "block";
@@ -139,6 +146,7 @@ function showModal(message, userId) {
     processJoinRequestQueue(); // Process next join request in the queue
   };
 }
+
 
 function hideModal(modal) {
   modal.style.display = "none";
@@ -162,6 +170,7 @@ function processJoinRequestQueue() {
 socket.on("user-accepted", (userId) => {
   if (userId === myPeer.id) {
     acceptedByAdmin = true;
+    showModal("You have been accepted by the admin.");
     if (otherUserAccepted) {
       establishPeerConnection(otherUserId); // Establish connection if the other user is also accepted
     }
