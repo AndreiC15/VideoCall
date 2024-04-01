@@ -81,12 +81,11 @@ video {
 /* CSS for socket ID text */
 .socket-id {
   position: absolute;
-  bottom: -20px; /* Adjust this value as needed to position the text below the video */
   left: 8%;
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 5px;
-  margin: 0;
+  margin-top:-15%;
   font-size: 12px;
 }
 

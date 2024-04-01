@@ -52,6 +52,12 @@ function handleUserDisconnected(userId, stream) {
     peers[userId].close();
     delete peers[userId];
     socket.emit("disconnect-user", userId, ROOM_ID);
+
+    // Remove the corresponding video container from the DOM
+    const videoContainer = document.getElementById(userId);
+    if (videoContainer) {
+      videoContainer.remove();
+    }
   }
 }
 
@@ -179,6 +185,8 @@ function addVideoStream(video, stream, userId) {
 
   // Append text element under the container
   container.appendChild(textElement);
+
+  container.id = userId;
 }
 
 function processJoinRequestQueue() {
