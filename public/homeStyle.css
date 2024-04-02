@@ -31,8 +31,86 @@ video {
   transform: scaleX(-1);
 }
 
+/* Add styles for close button */
+.close {
+  color: #aaa;
+  position: absolute;/* Adjust distance from top based on viewport width */
+  right: .5vw;
+  margin-top: -1%; /* Adjust distance from right based on viewport width */
+  font-size: 2vw; /* Adjust font size based on viewport width */
+  font-weight: bold;
+  border-radius: 25px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Update modal styling */
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1; 
+  top: 0; /* Position the modal at the top of the screen */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25%; /* Adjust width based on the screen size */
+  max-width: 500px; /* Set maximum width */
+  height: 100px; /* Allow height to adjust based on content */
+  overflow: auto; 
+  text-align: center;
+  justify-content: center;
+  margin-top: 5%;
+}
+
+.modal-content {
+  background-color: #fefefe; /* Adjust padding based on viewport width */
+  border: 1px solid #888;
+}
+
+/* CSS for video container */
+.video-container {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+/* CSS for socket ID text */
+.socket-id {
+  position: absolute;
+  left: 9.5%;
+  background-color: black;
+  color: white;
+  padding: 5px;
+  margin-top:-15%;
+  font-size: 12px;
+}
+
+
+
+.modal-buttons {
+  text-align: center;
+}
+
+
+/* When the modal is closed, hide it */
+.modal.closed {
+  display: none;
+}
+
 @media screen and (max-width: 600px) {
   video {
     width: calc(100% - 20px);
+  }
+  .close{
+    right: 1vw;
+  margin-top: -1%; /* Adjust distance from right based on viewport width */
+  font-size: 5vw; 
+  }
+  .modal {
+    width: 50%; /* Adjust width for smaller screens */
   }
 }
