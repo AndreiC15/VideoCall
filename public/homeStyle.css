@@ -81,8 +81,8 @@ video {
 /* CSS for socket ID text */
 .socket-id {
   position: absolute;
-  left: 8%;
-  background-color: rgba(0, 0, 0, 0.5);
+  left: 9.5%;
+  background-color: black;
   color: white;
   padding: 5px;
   margin-top:-15%;
