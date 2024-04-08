@@ -20,9 +20,7 @@ socket.on("admin-status", (isAdminFromServer) => {
   } else {
     console.log("Your Socket ID:" + myPeer.id);
     console.log("You are a guest.");
-    showModal(
-      "Welcome! Please wait for the admin to approve your join request"
-    );
+    showModal("Welcome! Please wait for the admin to approve your join request");
   }
 });
 
